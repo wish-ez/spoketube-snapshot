@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+{% load static %}
+{% load intword_thousands %}
+{% load url_replace %}
+{% load humanize %}
+{% load analytical %}
+{% load compress %}
+<html lang="en" class="no-result">
+<head>
+    {% analytical_head_top %}
+    <title>{{ search_requests|first }} - Spoketube (nothing found)</title>
+    <meta charset="UTF-8">
+
+    <link rel="apple-touch-icon" sizes="180x180" href="{% static 'img/favicon/favicon.ico' %}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'img/favicon/favicon-32x32.png' %}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'img/favicon/favicon-16x16.png' %}">
+    <link rel="manifest" href="{% static 'img/favicon/site.webmanifest' %}">
+    <link rel="mask-icon" href="{% static 'img/favicon/safari-pinned-tab.svg' %}" color="#646464">
+    <meta name="msapplication-TileColor" content="#ffc40d">
+    <meta name="theme-color" content="#ffffff">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="preload" as="font" href="{% static 'fonts/Roboto-Regular.ttf' %}" type="font/ttf2" crossorigin="anonymous">
+    <link rel="preload" as="font" href="{% static 'fonts/Roboto-Medium.ttf' %}" type="font/ttf2" crossorigin="anonymous">
+    <link rel="preload" as="font" href="{% static 'fonts/Roboto-Bold.ttf' %}" type="font/ttf2" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" media="none" onload="this.media='all'" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css">
+
+
+    {% compress css %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/basement.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/inputs.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/tagify.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/tagify_custom.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/search/no-results.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/search/search-page.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/search/search-form.css' %}">
+    {% endcompress %}
+
+
+    <script defer type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+    <script defer type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+
+    {% compress js %}
+    <script defer src="{% static 'js/inputs.js' %}" type="text/javascript"></script>
+    <script defer src="{% static 'js/search-form.js' %}" type="text/javascript"></script>
+    {% endcompress %}
+
+    {% analytical_head_bottom %}
+</head>
+
+<body>
+{% analytical_body_top %}
+<div class="content">
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
+    {% compress js %}
+    <script src="{% static 'js/scrollBar.js' %}" type="text/javascript"></script>
+    <script src="{% static 'js/tagify.js' %}" type="text/javascript"></script>
+    <script src="{% static 'js/tagify_setup.js' %}" type="text/javascript"></script>
+    <script src="{% static 'js/search-page.js' %}" type="text/javascript"></script>
+    {% endcompress %}
+    <form class="search-form-horizontal" action="" method="get">
+        <div class="container-horizontal">
+            <div class="logo">
+                    <a href="/"><img title="Back to Spoketube" src="{% static 'img/spoketube.png'%}"></a>
+                </div>
+            <div class="search-form-wrap">
+                <div class="tabs">
+                    {% comment %}
+                    //Loop through search-types to build form tabs
+                    {% endcomment %}
+
+                    {% for type in search_form.get_search_choices %}
+                        {% comment %}
+                        If request contains type parameter - set 'active-tab' class to highlight this tab,
+                        there around second class that does the same job - 'current-tab',
+                        but it's necessary for JS tab changing
+                        {% endcomment %}
+
+                        {% if request.GET.type == type|first %}
+                            <div class="tab-link active-tab" id="tab-{{ type|first }}" onclick="changeTab(this, '100%', '100%', 'true');">Search by {{ type|first }}</div>
+                        {% else %}
+                            <div class="tab-link" id="tab-{{ type|first }}" onclick="changeTab(this, '100%', '100%', 'true');">Search by {{ type|first }}</div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+                <div class="search-form">
+                    {{ search_form.type }}
+                    <div class="container-main-inputs">
+                        <div class="main-inputs" id="speech-input"
+                             label="{{ search_form.speech.label }}">
+                            {{ search_form.speech }}
+                        </div>
+                        <div class="main-inputs" id="where-input">
+                            {{ search_form.channels }}
+                        </div>
+                    </div>
+                    <div class="container-main-checkboxes">
+                        <div class="checkbox-wrap">
+                            <div class="label">
+                                Exact matches only
+                            </div>
+                            <div class="checkbox">
+                                <label class="switch">
+                                    {{ search_form.exact }}
+                                    <span class="slider round"></span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="checkbox-wrap">
+                            <div class="checkbox">
+                                <button type="button" id="advanced-settings" onclick="showAdvSettings()">Advanced settings</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="search-options-wrap"
+                         style="display: none">
+                        <div class="options speech blank">
+                            <div class="speech label">
+                                Speech to search
+                            </div>
+                            <div class="blank input"
+                                 label="">
+                            </div>
+                        </div>
+                        <div class="options title">
+                            <div class="title label">
+                                Title to search:
+                            </div>
+                            <div class="title input"
+                                 label="{{ search_form.title.label }}">
+                                {{ search_form.title }}
+                            </div>
+                        </div>
+                        <div class="options description">
+                            <div class="description label">
+                                Description to search:
+                            </div>
+                            <div class="description input"
+                                 label="{{ search_form.description.label }}">
+                                {{ search_form.description }}
+                            </div>
+                        </div>
+                        <div class="options tags">
+                            <div class="tags label">
+                                Tags to search:
+                            </div>
+                            <div class="tags input"
+                                 label="{{ search_form.tags.label }}">
+                                {{ search_form.tags }}
+                            </div>
+                        </div>
+                        <div class="options durationrange">
+                            <div class="durationrange label">
+                                Duration range:
+                            </div>
+                            <div class="durationrange-group">
+                                <div class="durationrange-min">
+                                    <div class="duration-input">
+                                        {{ search_form.min_duration }}
+                                        <div class="label">
+                                            Min. duration
+                                        </div>
+                                    </div>
+                                    <div class="duration-range">
+                                        <input type="range" id="min_duration_range" oninput="updateTime(this, 'id_min_duration');" min="0" max="60" value="0" step="1">
+                                    </div>
+                                </div>
+                                &mdash;
+                                <div class="durationrange-max">
+                                    <div class="duration-input">
+                                        {{ search_form.max_duration }}
+                                        <div class="label">
+                                            Max. duration
+                                        </div>
+                                    </div>
+                                    <div class="duration-range">
+                                        <input type="range" id="max_duration_range" oninput="updateTime(this, 'id_max_duration');" min="0" max="60" value="0" step="1">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="options daterange">
+                            <div class="daterange label">
+                                Published date range:
+                            </div>
+                            <div class="daterange-group">
+                                <div class="daterange-start">
+                                    <div class="inputs">
+                                        {{ search_form.start_date }}
+                                    </div>
+                                    <div class="label">
+                                        Start date
+                                    </div>
+                                </div>
+                                &mdash;
+                                <div class="daterange-end">
+                                    <div class="inputs">
+                                        {{ search_form.end_date }}
+                                    </div>
+                                    <div class="label">
+                                        End date
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="search-button-wrap">
+                <div class="search-button" onClick="submitForm()"></div>
+            </div>
+        </div>
+    </form>
+    <script>
+        tagifySetup();
+    </script>
+    <h2>There are no results.</h2>
+    {% if search_channels and not channels_exists %}
+    <h3 class="nores-message">Unfortunately we can't find channel{{ search_channels | pluralize:"s" }} {{ search_channels | join:", " }}<br>
+    <a href="/contact">Let us know</a> and soon it will be available for search!</h3>
+    {% else %}
+    <h3>Try to change search parameters or priorities in your life.</h3>
+    {% endif %}
+</div>
+<span class="basement">
+    <a href="/">Main page</a>
+    &nbsp;
+    &bull;
+    &nbsp;
+    <a href="/contact">Contact us</a>
+</span>
+{% analytical_body_bottom %}
+</body>
+</html>

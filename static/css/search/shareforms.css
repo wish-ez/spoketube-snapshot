@@ -1,0 +1,183 @@
+#shareFormMatch,
+#shareFormResult {
+    display: none
+}
+
+.ui-dialog {
+    min-width: 20em
+}
+
+#shareFormMatch input,
+#shareFormResult input {
+    font-size: 1em;
+    font-family: Roboto, sans-serif
+}
+
+.dialog-ui-widget {
+    background: #000
+}
+
+.dialog-titlebar {
+    background: 0 0;
+    border: none
+}
+
+#shareFormMatch .end-time,
+#shareFormMatch .start-time,
+#shareFormMatch .title,
+#shareFormResult .title {
+    margin-top: 1em
+}
+
+#shareFormMatch .end-time-form,
+#shareFormMatch .start-time-form,
+#shareFormMatch .title,
+#shareFormResult .title {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%
+}
+
+.title .title-form {
+    width: 100%;
+    margin-left: .5em
+}
+
+.end-time,
+.start-time {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start
+}
+
+.end-time-input,
+.start-time-input {
+    margin-left: .5em;
+    width: auto
+}
+
+.end-time-range,
+.start-time-range {
+    width: 100%
+}
+
+#shareFormMatch input[type=range]::-webkit-slider-runnable-track {
+    background: #b3b3b3;
+    height: 5px;
+    width: 95%
+}
+
+#shareFormMatch input[type=range]::-moz-range-track {
+    background: #b3b3b3;
+    height: 5px;
+    width: 95%
+}
+
+#shareFormMatch input[type=range]::-ms-track {
+    background: 0 0;
+    height: 5px;
+    width: 95%
+}
+
+#shareFormMatch input[type=range]::-ms-fill-lower {
+    background: #b3b3b3
+}
+
+#shareFormMatch input[type=range]::-ms-fill-upper {
+    background: #b3b3b3
+}
+
+#shareFormMatch input[type=time] {
+    width: 7em
+}
+
+#blank-match-wrap {
+    display: none
+}
+
+.options-first-row {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-end;
+    width: 100%;
+    margin-top: 1em
+}
+
+.loop-option {
+    display: inherit
+}
+
+.autoplay-option {
+    display: inherit
+}
+
+.loop-option .checkbox {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    margin-left: .5em
+}
+
+.autoplay-option .checkbox {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    margin-left: .5em
+}
+
+.share-buttons {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-top: 1em
+}
+
+#shareMatch {
+    margin-top: 1em
+}
+
+.shareForm {
+    display: none
+}
+
+button[id=btn-share-play],
+button[id=btn-share-reset] {
+    display: block;
+    max-width: 8em;
+    height: 100%;
+    font-weight: 500;
+    box-sizing: border-box;
+    border: 1px solid #aaa;
+    box-shadow: 0 1px 0 1px rgba(0, 0, 0, .04);
+    padding: .3em .5em;
+    border-radius: .3em;
+    cursor: pointer;
+    background-color: #fff;
+    background-image: linear-gradient(to bottom, #fff 0, #e5e5e5 100%);
+    background-repeat: repeat;
+    background-position: 0 0;
+    background-size: 100%
+}
+
+button[id=btn-share-play]:hover,
+button[id=btn-share-reset]:hover {
+    background-image: linear-gradient(to bottom, #f6f6f6 5%, #fff 100%);
+    background-color: #f6f6f6;
+    border-color: #888
+}
+
+button[id=btn-share-play]:active,
+button[id=btn-share-reset]:active {
+    position: relative;
+    top: 1px
+}
+
+.a2a_default_style a {
+    padding: 2px!important
+}

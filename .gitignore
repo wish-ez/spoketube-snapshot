@@ -1,0 +1,53 @@
+# Elastic Beanstalk
+.elasticbeanstalk/*
+!.elasticbeanstalk/*.cfg.yml
+!.elasticbeanstalk/*.global.yml
+
+# Secrets / local developer configuration
+dev/
+dev/*
+*.env
+.env
+.env.*
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.Python
+build/
+dist/
+
+# Virtual environments
+venv/
+.venv/
+env/
+.env/
+ENV/
+
+# IDE / editor
+.idea/
+.idea/*
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS junk
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs / local databases
+*.log
+logs/
+*.sqlite3
+*.sqlite3-journal
+db.sqlite3
+
+# Test / coverage artifacts
+.coverage
+htmlcov/
+.pytest_cache/
+.tox/

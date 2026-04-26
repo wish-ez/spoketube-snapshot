@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+{% load static %}
+{% load %}
+{% load analytical %}
+{% load compress %}
+<html lang="en">
+<head>
+    {% analytical_head_top %}
+    <meta charset="UTF-8">
+    <title>500 - Spoketube</title>
+
+    <link rel="apple-touch-icon" sizes="180x180" href="{% static 'img/favicon/favicon.ico' %}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'img/favicon/favicon-32x32.png' %}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'img/favicon/favicon-16x16.png' %}">
+    <link rel="manifest" href="{% static 'img/favicon/site.webmanifest' %}">
+    <link rel="mask-icon" href="{% static 'img/favicon/safari-pinned-tab.svg' %}" color="#646464">
+    <meta name="msapplication-TileColor" content="#ffc40d">
+    <meta name="theme-color" content="#ffffff">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="preload" as="font" href="{% static 'fonts/Roboto-Regular.ttf' %}" type="font/ttf2" crossorigin="anonymous">
+    <link rel="preload" as="font" href="{% static 'fonts/Roboto-Medium.ttf' %}" type="font/ttf2" crossorigin="anonymous">
+    <link rel="preload" as="font" href="{% static 'fonts/Roboto-Bold.ttf' %}" type="font/ttf2" crossorigin="anonymous">
+    {% compress css %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/error_page.css' %}">
+    {% endcompress %}
+
+    {% analytical_head_bottom %}
+</head>
+<body>
+{% analytical_body_top %}
+<div class="logo">
+    <a href="/"><img title="Back to Spoketube" src="{% static 'img/spoketube.png'%}"></a>
+</div>
+<h1>Server error occurred. Yep.</h1>
+<div class="img-wrap">
+    <img src="{% static 'img/500.png' %}" class="page-500">
+</div>
+{% analytical_body_bottom %}
+</body>
+</html>

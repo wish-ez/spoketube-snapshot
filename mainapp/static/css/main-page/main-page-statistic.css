@@ -1,0 +1,103 @@
+@media only screen and (min-width: 534px) {
+    .main-page-statistic {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: flex-start;
+        border-radius: .3em;
+        width: inherit;
+        max-width: 50vw;
+        max-height: 25em;
+        padding-bottom: 1em;
+        margin-left: 1.5em
+    }
+}
+
+@media only screen and (max-width: 534px) {
+    .main-page-statistic {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: flex-start;
+        border-radius: .3em;
+        max-width: 90vw;
+        max-height: 20em;
+        margin-left: .6em
+    }
+}
+
+.main-page-statistic-wrap {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center
+}
+
+.statistic-channel {
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    width: 100%;
+    border: 1px solid #000;
+    border-radius: .3em;
+    margin-top: .3em;
+    margin-bottom: .3em;
+    flex-wrap: wrap;
+    padding: .3em
+}
+
+.channel-logo img {
+    border-radius: 50%;
+    height: 2em;
+    width: 2em;
+    display: block
+}
+
+.channel-logo,
+.channel-title,
+.channel-subscribers-count,
+.channel-videos-count {
+    margin-left: .3em;
+    margin-right: .3em
+}
+
+.channel-title a {
+    text-decoration: none;
+    color: inherit
+}
+
+.channel-value,
+.channel-title {
+    font-weight: 600;
+    word-break: break-word
+}
+
+.channel-subscribers-count,
+.channel-videos-count {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start
+}
+
+.channel-label {
+    font-weight: 500
+}
+
+.load-more-button-wrap {
+    width: 100%;
+    display: flex;
+    justify-content: center
+}
+
+.load-more-button {
+    height: 2em
+}
+
+.load-more-button img {
+    display: none;
+    width: 2em;
+    height: inherit;
+    margin-left: .5em
+}

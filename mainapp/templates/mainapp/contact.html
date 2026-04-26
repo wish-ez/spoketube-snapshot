@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+{% load static %}
+{% load analytical %}
+{% load compress %}
+<html lang="en">
+<head>
+    {% analytical_head_top %}
+    <meta charset="UTF-8">
+    <title>Contact us - Spoketube</title>
+    <meta name="description" content="Search for speech within YouTube videos and channels! Besides you can search videos by title, description, and tags">
+    <meta name="keywords" content="spoketube,youtube,search,video,speech,sound,emotion,music,word,phrase,title,description,tag">
+
+    <link rel="apple-touch-icon" sizes="180x180" href="{% static 'img/favicon/favicon.ico' %}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'img/favicon/favicon-32x32.png' %}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'img/favicon/favicon-16x16.png' %}">
+    <link rel="manifest" href="{% static 'img/favicon/site.webmanifest' %}">
+    <link rel="mask-icon" href="{% static 'img/favicon/safari-pinned-tab.svg' %}" color="#646464">
+    <meta name="msapplication-TileColor" content="#ffc40d">
+    <meta name="theme-color" content="#ffffff">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="preload" as="font" href="{% static 'fonts/Roboto-Regular.ttf' %}" type="font/ttf2" crossorigin="anonymous">
+    <link rel="preload" as="font" href="{% static 'fonts/Roboto-Medium.ttf' %}" type="font/ttf2" crossorigin="anonymous">
+    <link rel="preload" as="font" href="{% static 'fonts/Roboto-Bold.ttf' %}" type="font/ttf2" crossorigin="anonymous">
+    {% compress css %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/basement.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/contact-form.css' %}">
+    {% endcompress %}
+
+    {% analytical_head_bottom %}
+</head>
+<body>
+{% analytical_body_top %}
+<div class="content">
+    <div class="logo">
+        <a href="/"><img title="Back to Spoketube" src="{% static 'img/spoketube.png'%}"></a>
+    </div>
+    <h2>Feel free to contact us about your comments, suggestions and channels you want to search</h2>
+    <div class="contact-form-wrap">
+        {% if send_status == 'success' %}
+        <h3><span class="success">Thank you! Your message has been successfully sent</span></h3>
+        {% elif send_status == 'fail' %}
+        <h3><span class="fail">Something went wrong, please contact us at contact@spoketube.com</span></h3>
+        {% else %}
+        <form method="post" class="contact-form">
+            {% csrf_token %}
+            <div class="name-email-fields">
+                {{ form.name }}
+                {{ form.from_email }}
+            </div>
+            <div class="subject-field">
+                {{ form.subject }}
+            </div>
+            <div class="message-field">
+                {{ form.message }}
+            </div>
+            <div class="captcha">
+                {{ form.captcha }}
+            </div>
+            <div class="form-actions">
+                <button id="contact-submit" type="submit">Send</button>
+            </div>
+        </form>
+        {% endif %}
+    </div>
+</div>
+<span class="basement">
+    <a href="/">Main page</a>
+    &nbsp;
+    &bull;
+    &nbsp;
+    <a href="/contact">Contact us</a>
+</span>
+{% analytical_body_bottom %}
+</body>
+</html>

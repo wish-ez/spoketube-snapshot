@@ -1,0 +1,62 @@
+.tagify__dropdown.extra-properties .tagify__dropdown__item>img {
+    display: inline-block;
+    vertical-align: middle;
+    height: 25px;
+    width: auto;
+    transform: scale(.85);
+    margin-right: 5px;
+    border-radius: 50%;
+    transition: .12s ease-out
+}
+
+.tagify__dropdown.extra-properties .tagify__dropdown__item:hover>img {
+    transform: none;
+    margin-right: 12px
+}
+
+.tagify .tagify__input {
+    min-width: 10px
+}
+
+tag:not(:empty)+.tagify__input::before {
+    content: none
+}
+
+.tagify tag {
+    white-space: nowrap
+}
+
+.tagify tag img {
+    display: inline-block;
+    vertical-align: middle;
+    height: 1em;
+    width: auto;
+    margin-right: 3px;
+    border-radius: 49%
+}
+
+.tagify {
+    -moz-appearance: textfield;
+    -webkit-appearance: textfield;
+    background-color: #fff;
+    background-color: -moz-field;
+    border: 1px solid #a9a9a9;
+    box-shadow: 1px 1px 1px 0 #d3d3d3 inset;
+    border-radius: .3em;
+    overflow-x: hidden
+}
+
+.tagify tag x {
+    height: 16px;
+    width: 16px
+}
+
+.tagify tag>div::before {
+    background-color: #dadada;
+    box-shadow: 0 0 0 16px #dadada inset
+}
+
+.tagify tag:hover>div::before {
+    background-color: #d3e2e2;
+    box-shadow: 0 0 0 16px #d3e2e2 inset
+}

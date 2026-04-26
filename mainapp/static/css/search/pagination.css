@@ -1,0 +1,28 @@
+.pagination {
+    margin-top: 4vh;
+    margin-bottom: 2vh;
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    max-width: 90vw
+}
+
+.pagination a {
+    color: #000;
+    float: left;
+    padding: .5em 1em;
+    text-decoration: none;
+    border-radius: .3em
+}
+
+.pagination a.current-page {
+    background-color: #2196f3;
+    color: #fff;
+    border-radius: .3em
+}
+
+.pagination a:hover:not(.current-page) {
+    background-color: #ddd
+}

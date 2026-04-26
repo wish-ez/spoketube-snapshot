@@ -1,0 +1,24 @@
+;function updateTime(e,input_id,seconds=false){if(seconds==true){var time_input=document.getElementById(input_id);time_input.value=getStringTime(e.value);return;}
+var hours=parseInt(e.value/60);var minutes=e.value-hours*60;if(hours<10||hours==0){hours="0"+hours.toString();};if(minutes<10||minutes==0){minutes="0"+minutes.toString();};var time_input=document.getElementById(input_id);time_input.value=hours+":"+minutes;};function getStringTime(total_seconds){var hours=parseInt(total_seconds/3600);var minutes=parseInt((total_seconds-hours*3600)/60);var seconds=total_seconds-hours*3600-minutes*60;if(hours<10||hours==0){hours="0"+hours.toString();};if(minutes<10||minutes==0){minutes="0"+minutes.toString();};if(seconds<10||seconds==0){seconds="0"+seconds.toString();};var res=hours+":"+minutes+":"+seconds;return res;};function stringTimeToSecs(string_time){var arr_string_time=string_time.split(":");var hours=parseInt(arr_string_time[0]);var minutes=parseInt(arr_string_time[1]);var seconds=parseInt(arr_string_time[2]);var result=hours*3600+minutes*60+seconds;return result;}
+function updateRange(e,range_id,seconds=false){var time_input=e.value.split(':');var range_input=document.getElementById(range_id);if(time_input==""){return;}
+if(seconds==true){var seconds=parseInt(time_input[0]*3600)+parseInt(time_input[1]*60)+parseInt(time_input[2]);range_input.value=seconds;}
+else{var seconds=parseInt(time_input[0]*60)+parseInt(time_input[1]);range_input.value=seconds;}};function resetRange(e,range_id){var range_input=document.getElementById(range_id);range_input.value=0;};;function updateTabs(){var type=getUrlParameter('type');if(type){if(type=='speech'){return;}
+var tab=document.getElementById('tab-'+type);changeTab(tab,'100%','100%','false');}
+else{var tab=document.getElementById('tab-speech');$(tab).addClass('current-tab');}}
+function swap(a,b){a=$(a);b=$(b);var tmp=$('<span>').hide();a.before(tmp);b.before(a);tmp.replaceWith(b);};function changeTab(e,main_input_width,optional_inputs_width,clear_option){if($(e).hasClass('current-tab')){return;}
+else if(e.attributes.id.value=='tab-speech'&&$(e).hasClass('active-tab')){return;}
+else{var active_tab=document.querySelector('.active-tab');$(active_tab).removeClass('active-tab');var tab_curr=document.querySelector('.current-tab');$(tab_curr).removeClass('current-tab');$(e).addClass('current-tab');var type=document.getElementById('id_type');type.value=e.attributes.id.value.replace('tab-','');var blank_input=document.querySelector('.blank.input');var curr_input=document.querySelector('.container-main-inputs').children[0];var curr_margin=$(curr_input).css('margin-bottom');if(clear_option=='true'){TAGIFY_WITH_VALUES.forEach(function(e){e.removeAllTags();})
+var inputs=document.querySelector('form').querySelectorAll('input')
+inputs.forEach(function(e){if(e.attributes.type.value=='range'){e.value=0;e.dispatchEvent(new Event('change'));}
+else{e.value=null;}})}
+if(e.attributes.id.value=='tab-title'){var next_input=document.getElementsByClassName('title input')[0];}
+if(e.attributes.id.value=='tab-description'){var next_input=document.getElementsByClassName('description input')[0];}
+if(e.attributes.id.value=='tab-tags'){var next_input=document.getElementsByClassName('tags input')[0];}
+if(e.attributes.id.value=='tab-speech'){var next_input=document.getElementById('speech-input');}
+var next_parent=$(next_input).closest('.options');var next_margin=$(next_input).css('margin-left');swap(blank_input,curr_input);swap(blank_input,next_input);$(curr_input).closest('.options').removeClass('blank');$(next_parent).addClass('blank');next_input.style.width=main_input_width;next_input.style.margin_bottom=curr_margin;curr_input.style.width=optional_inputs_width;curr_input.style.margin_bottom=next_margin;}}
+function showAdvSettings(){$(".search-options-wrap").slideToggle(300);};function submitForm(){var form=document.querySelector('form');$(form).submit(function(e){var emptyinputs=$(this).find('input').filter(function(){return!$.trim(this.value).length;}).prop('disabled',true);});form.querySelectorAll('input[type=text]').forEach(function(e){if(e.value){var res=[]
+try{v=JSON.parse(e.value)
+v.forEach(function(t){res.push(t.value)})}
+catch(e){return false;}
+e.value=res.join(',');}})
+$('form').submit();};function getUrlParameter(sParam){var sPageURL=window.location.search.substring(1),sURLVariables=sPageURL.split('&'),sParameterName,i;for(i=0;i<sURLVariables.length;i++){sParameterName=sURLVariables[i].split('=');if(sParameterName[0]===sParam){return sParameterName[1]===undefined?true:decodeURIComponent(sParameterName[1]);}}};

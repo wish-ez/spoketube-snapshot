@@ -1,0 +1,125 @@
+{% extends "admin/index.html" %}
+{% load static %}
+{% block extrastyle %}{{ block.super }}<link rel="stylesheet" type="text/css" href="{% static '/admin/css/add_youtube_data.css' %}">
+{% endblock %}
+{% block content %}
+<h1>Search for YouTube channels or videos</h1>
+<div id="content-main">
+    <div id="toolbar">
+        <form id="changelist-search" method="get">
+            <div class="actions">
+                <label>Search type: <select name="type" required="">
+                    {% if yt_search_type == 'channels' %}
+                    <option selected="selected" value="channels">Channels</option>
+                    <option value="videos">Videos</option>
+                    {% elif yt_search_type == 'videos' %}
+                    <option value="channels">Channels</option>
+                    <option selected="selected" value="videos">Videos</option>
+                    {% else %}
+                    <option value="channels">Channels</option>
+                    <option value="videos">Videos</option>
+                    {% endif %}
+                </select>
+                </label>
+            </div>
+            <div class="search-input"><!-- DIV needed for valid HTML -->
+            {% if search_value %}
+            <input type="text" size="40" name="q" value="{{ search_value }}" id="searchbar" autofocus="">
+            {% else %}
+            <input type="text" size="40" name="q" value="" id="searchbar" autofocus="">
+            {% endif %}
+            <input type="submit" value="Search">
+            </div>
+        </form>
+    </div>
+    {% if yt_search_results %}
+        {% if yt_search_type == 'channels' %}
+        <table id="result_list">
+            <tr>
+                <th>Logo</th>
+                <th>Title</th>
+                <th>Channel ID</th>
+                <th>Description</th>
+                <th>Published date</th>
+                <th>Details button</th>
+                <th>Add channel</th>
+            </tr>
+            {% for result in yt_search_results %}
+            <tr class="{% cycle 'row1' 'row2' %}">
+                <td>
+                    <img src="{{ result.thumbnailsDefaultUrl }}" style="border-radius: 50%;">
+                </td>
+                <td>
+                    <a href="https://www.youtube.com/channel/{{ result.channelId }}" target="_blank">{{ result.title }}</a>
+                </td>
+                <td>
+                    {{ result.channelId }}
+                </td>
+                <td>
+                    {{ result.description | truncatechars:100 }}
+                </td>
+                <td>
+                    {{ result.publishedAt }}
+                </td>
+                <td>
+                    <a href="/icecrown/get_youtube_details/?type=channel&id={{ result.channelId }}" class="button-details">Details</a>
+                </td>
+                <td>
+                    {% if not result.is_in_db %}
+                    <a href="/icecrown/get_youtube_details/?type=channel&id={{ result.channelId }}&title={{ result.title }}&add=true" class="button-details">Add channel</a>
+                    {% else %}
+                    Channel already in DB
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+        {% elif yt_search_type == 'videos' %}
+        <table id="result_list">
+            <tr>
+                <th>Logo</th>
+                <th>Channel title</th>
+                <th>Title</th>
+                <th>Video ID</th>
+                <th>Description</th>
+                <th>Published date</th>
+                <th>Details button</th>
+                <th>Add video</th>
+            </tr>
+            {% for result in yt_search_results %}
+            <tr class="{% cycle 'row1' 'row2' %}">
+                <td>
+                    <img src="{{ result.thumbnailsDefaultUrl }}" style="border-radius: 10%;">
+                </td>
+                <td>
+                    {{ result.channelTitle }}
+                </td>
+                <td>
+                    <a href="https://www.youtube.com/watch?v={{ result.videoId }}" target="_blank">{{ result.title }}</a>
+                </td>
+                <td>
+                    {{ result.videoId }}
+                </td>
+                <td>
+                    {{ result.description | truncatechars:100 }}
+                </td>
+                <td>
+                    {{ result.publishedAt }}
+                </td>
+                <td>
+                    <a href="/icecrown/get_youtube_details/?type=video&id={{ result.videoId }}" class="button-details">Details</a>
+                </td>
+                <td>
+                    {% if not result.is_in_db %}
+                    <a href="/icecrown/get_youtube_details/?type=video&id={{ result.videoId }}&title={{ result.title }}&add=true" class="button-details">Add video</a>
+                    {% else %}
+                    Video already in DB
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+        {% endif %}
+    {% endif %}
+</div>
+{% endblock %}

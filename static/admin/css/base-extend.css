@@ -1,0 +1,45 @@
+#parser-tools {
+display: flex;
+}
+
+#parser-tools a:hover {
+text-decoration: none;
+}
+
+.parser-status, .quotas-status, .add-yt-data, .proxies-count {
+height: min-content;
+text-align: center;
+padding: 10px 10px;
+background: #999;
+font-weight: 400;
+font-size: 11px;
+margin-right: 20px;
+margin-left: 20px;
+text-transform: uppercase;
+letter-spacing: 0.5px;
+color: #fff;
+border-radius: 3px;
+}
+
+.parser-status.idle {
+}
+
+.parser-status.work {
+background: #03a700;
+}
+
+.parser-status.error, .proxies-count.no-proxies {
+background: #ea0000;
+}
+
+.quotas-status.attention {
+background: #ffa913;
+}
+
+.quotas-status.warning {
+background: #ea0000;
+}
+
+.dashboard #content {
+width: unset;
+}

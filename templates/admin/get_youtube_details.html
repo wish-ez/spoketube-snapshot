@@ -1,0 +1,157 @@
+{% extends "admin/index.html" %}
+{% load static %}
+{% load humanize %}
+{% load seconds_to_time %}
+{% block extrastyle %}{{ block.super }}<link rel="stylesheet" type="text/css" href="{% static '/admin/css/get_youtube_details.css' %}">
+{% endblock %}
+{% block content %}
+<div id="content-main">
+    {% if yt_item %}
+    {% if yt_item_type == 'channel' %}
+    <div>
+    <table id="result">
+        <tr>
+            <th>Logo</th>
+            <th>Title</th>
+            <th>Channel ID</th>
+            <th>Already in DB</th>
+            <th>Description</th>
+            <th>Published date</th>
+            <th>Tags</th>
+            <th>Country</th>
+            <th>Default language</th>
+            <th>Text default language</th>
+            <th>Count videos</th>
+            <th>Count subscribers</th>
+            <th>Count views</th>
+        </tr>
+        <tr class="{% cycle 'row1' 'row2' %}">
+            <td>
+                <img src="{{ yt_item.thumbnailsDefaultUrl }}" style="border-radius: 50%;">
+            </td>
+            <td>
+                <a href="https://www.youtube.com/channel/{{ yt_item.channelId }}" target="_blank">{{ yt_item.title }}</a>
+            </td>
+            <td>
+                {{ yt_item.channelId }}
+            </td>
+            <td>
+                {{ yt_item.is_in_db }}
+            </td>
+            <td>
+                {{ yt_item.description | truncatechars:100 }}
+            </td>
+            <td>
+                {{ yt_item.publishedAt }}
+            </td>
+            <td>
+                {{ yt_item.keywords | truncatechars:100 }}
+            </td>
+            <td>
+                {{ yt_item.country }}
+            </td>
+            <td>
+                {{ yt_item.defaultLanguage }}
+            </td>
+            <td>
+                {{ yt_item.textDefaultLanguage }}
+            </td>
+            <td>
+                {{ yt_item.videoCount | intcomma }}
+            </td>
+            <td>
+                {{ yt_item.subscriberCount | intcomma }}
+            </td>
+            <td>
+                {{ yt_item.viewCount | intcomma }}
+            </td>
+        </tr>
+    </table>
+    </div>
+    {% if not yt_item.is_in_db %}
+    <a href="/icecrown/get_youtube_details/?type=channel&id={{ yt_item.channelId }}&title={{ yt_item.title }}&add=true" class="button-add">Add channel</a>
+    {% endif %}
+    {% elif yt_item_type == 'video' %}
+    <div>
+    <table id="result">
+        <tr>
+            <th>Logo</th>
+            <th>Channel title</th>
+            <th>Title</th>
+            <th>Already in DB</th>
+            <th>Video ID</th>
+            <th>Description</th>
+            <th>Published date</th>
+            <th>Tags</th>
+            <th>Duration</th>
+            <th>Embeddable</th>
+            <th>Default Audio Language</th>
+            <th>Default Language</th>
+            <th>View count</th>
+            <th>Like count</th>
+            <th>Dislike count</th>
+            <th>Comment count</th>
+
+        </tr>
+        <tr class="{% cycle 'row1' 'row2' %}">
+            <td>
+                <img src="{{ yt_item.thumbnailsDefaultUrl }}" style="border-radius: 10%;">
+            </td>
+            <td>
+                {{ yt_item.channelTitle }}
+            </td>
+            <td>
+                <a href="https://www.youtube.com/channel/{{ yt_item.videoId }}" target="_blank">{{ yt_item.title }}</a>
+            </td>
+            <td>
+                {{ yt_item.is_in_db }}
+            </td>
+            <td>
+                {{ yt_item.channelId }}
+            </td>
+            <td>
+                {{ yt_item.description | truncatechars:100 }}
+            </td>
+            <td>
+                {{ yt_item.publishedAt }}
+            </td>
+            <td>
+                {{ yt_item.tags | truncatechars:100 }}
+            </td>
+            <td>
+                {{ yt_item.duration | formatSeconds }}
+            </td>
+            <td>
+                {{ yt_item.embeddable }}
+            </td>
+            <td>
+                {{ yt_item.defaultAudioLanguage }}
+            </td>
+            <td>
+                {{ yt_item.defaultLanguage }}
+            </td>
+            <td>
+                {{ yt_item.viewCount | intcomma }}
+            </td>
+            <td>
+                {{ yt_item.likeCount | intcomma }}
+            </td>
+            <td>
+                {{ yt_item.dislikeCount | intcomma }}
+            </td>
+            <td>
+                {{ yt_item.commentCount | intcomma }}
+            </td>
+        </tr>
+    </table>
+    </div>
+    {% if not yt_item.is_in_db %}
+    <a href="/icecrown/get_youtube_details/?type=video&id={{ yt_item.videoId }}&title={{ yt_item.title }}&add=true" class="button-add">Add video</a>
+    {% endif %}
+    {% endif %}
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block sidebar %}
+{% endblock %}

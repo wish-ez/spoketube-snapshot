@@ -1,0 +1,1127 @@
+<!DOCTYPE html>
+{% load static %}
+{% load intword_thousands %}
+{% load url_replace %}
+{% load humanize %}
+{% load analytical %}
+{% load compress %}
+<html lang="en">
+<head>
+    {% analytical_head_top %}
+    <title>{{ search_requests|first }} - Spoketube (found {{ total_videos | intcomma }} video{{ total_videos | pluralize }})</title>
+    <meta charset="UTF-8">
+
+    <link rel="apple-touch-icon" sizes="180x180" href="{% static 'img/favicon/favicon.ico' %}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'img/favicon/favicon-32x32.png' %}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'img/favicon/favicon-16x16.png' %}">
+    <link rel="manifest" href="{% static 'img/favicon/site.webmanifest' %}">
+    <link rel="mask-icon" href="{% static 'img/favicon/safari-pinned-tab.svg' %}" color="#646464">
+    <meta name="msapplication-TileColor" content="#ffc40d">
+    <meta name="theme-color" content="#ffffff">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="preload" as="font" href="{% static 'fonts/Roboto-Regular.ttf' %}" type="font/ttf2" crossorigin="anonymous">
+    <link rel="preload" as="font" href="{% static 'fonts/Roboto-Medium.ttf' %}" type="font/ttf2" crossorigin="anonymous">
+    <link rel="preload" as="font" href="{% static 'fonts/Roboto-Bold.ttf' %}" type="font/ttf2" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" media="none" onload="this.media='all'" href="https://code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css">
+    <link rel="stylesheet" type="text/css" media="none" onload="this.media='all'" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.css">
+    <link rel="stylesheet" type="text/css" media="none" onload="this.media='all'" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css">
+
+    {% compress css %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/basement.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/inputs.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/scrollBar.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/tagify.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/tagify_custom.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/search/shareforms.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/search/search-page.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/search/search-form.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/search/pagination.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/search/players.css' %}">
+    {% endcompress %}
+
+
+    <script defer type="text/javascript" src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script defer type="text/javascript" src="https://www.youtube.com/iframe_api"></script>
+    <script defer type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+    <script defer type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+    <script defer type="text/javascript" src="https://apis.google.com/js/platform.js"></script>
+
+    {% compress js %}
+    <script defer src="{% static 'js/players.js' %}" type="text/javascript"></script>
+    <script defer src="{% static 'js/inputs.js' %}" type="text/javascript"></script>
+    <script defer src="{% static 'js/smoothScroll.js' %}" type="text/javascript"></script>
+    <script defer src="{% static 'js/load-rest-matches.js' %}" type="text/javascript"></script>
+    <script defer src="{% static 'js/search-form.js' %}" type="text/javascript"></script>
+    {% endcompress %}
+
+    {% analytical_head_bottom %}
+</head>
+
+<body>
+{% analytical_body_top %}
+<div class="content">
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
+    {% compress js %}
+    <script src="{% static 'js/scrollBar.js' %}" type="text/javascript"></script>
+    <script src="{% static 'js/tagify.js' %}" type="text/javascript"></script>
+    <script src="{% static 'js/tagify_setup.js' %}" type="text/javascript"></script>
+    <script src="{% static 'js/search-page.js' %}" type="text/javascript"></script>
+    {% endcompress %}
+    <form class="search-form-horizontal" action="" method="get">
+        <div class="container-horizontal">
+            <div class="logo">
+                    <a href="/"><img title="Back to Spoketube" src="{% static 'img/spoketube.png'%}"></a>
+                </div>
+            <div class="search-form-wrap">
+                <div class="tabs">
+                    {% for type in search_form.get_search_choices %}
+
+                        {% if request.GET.type == type|first %}
+                            <div class="tab-link active-tab" id="tab-{{ type|first }}" onclick="changeTab(this, '100%', '100%', 'true');">Search by {{ type|first }}</div>
+                        {% else %}
+                            <div class="tab-link" id="tab-{{ type|first }}" onclick="changeTab(this, '100%', '100%', 'true');">Search by {{ type|first }}</div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+                <div class="search-form">
+                    {{ search_form.type }}
+                    <div class="container-main-inputs">
+                        <div class="main-inputs" id="speech-input"
+                             label="{{ search_form.speech.label }}">
+                            {{ search_form.speech }}
+                        </div>
+                        <div class="main-inputs" id="where-input">
+                            {{ search_form.channels }}
+                        </div>
+                    </div>
+                    <div class="container-main-checkboxes">
+                        <div class="checkbox-wrap">
+                            <div class="label">
+                                Exact matches only
+                            </div>
+                            <div class="checkbox">
+                                <label class="switch">
+                                    {{ search_form.exact }}
+                                    <span class="slider round"></span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="checkbox-wrap">
+                            <div class="checkbox">
+                                <button type="button" id="advanced-settings" onclick="showAdvSettings()">Advanced settings</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="search-options-wrap"
+                         style="display: none">
+                        <div class="options speech blank">
+                            <div class="speech label">
+                                Speech to search
+                            </div>
+                            <div class="blank input"
+                                 label="">
+                            </div>
+                        </div>
+                        <div class="options title">
+                            <div class="title label">
+                                Title to search:
+                            </div>
+                            <div class="title input"
+                                 label="{{ search_form.title.label }}">
+                                {{ search_form.title }}
+                            </div>
+                        </div>
+                        <div class="options description">
+                            <div class="description label">
+                                Description to search:
+                            </div>
+                            <div class="description input"
+                                 label="{{ search_form.description.label }}">
+                                {{ search_form.description }}
+                            </div>
+                        </div>
+                        <div class="options tags">
+                            <div class="tags label">
+                                Tags to search:
+                            </div>
+                            <div class="tags input"
+                                 label="{{ search_form.tags.label }}">
+                                {{ search_form.tags }}
+                            </div>
+                        </div>
+                        <div class="options durationrange">
+                            <div class="durationrange label">
+                                Duration range:
+                            </div>
+                            <div class="durationrange-group">
+                                <div class="durationrange-min">
+                                    <div class="duration-input">
+                                        {{ search_form.min_duration }}
+                                        <div class="label">
+                                            Min. duration
+                                        </div>
+                                    </div>
+                                    <div class="duration-range">
+                                        <input type="range" id="min_duration_range" oninput="updateTime(this, 'id_min_duration');" min="0" max="60" value="0" step="1">
+                                    </div>
+                                </div>
+                                &mdash;
+                                <div class="durationrange-max">
+                                    <div class="duration-input">
+                                        {{ search_form.max_duration }}
+                                        <div class="label">
+                                            Max. duration
+                                        </div>
+                                    </div>
+                                    <div class="duration-range">
+                                        <input type="range" id="max_duration_range" oninput="updateTime(this, 'id_max_duration');" min="0" max="60" value="0" step="1">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="options daterange">
+                            <div class="daterange label">
+                                Published date range:
+                            </div>
+                            <div class="daterange-group">
+                                <div class="daterange-start">
+                                    <div class="inputs">
+                                        {{ search_form.start_date }}
+                                    </div>
+                                    <div class="label">
+                                        Start date
+                                    </div>
+                                </div>
+                                &mdash;
+                                <div class="daterange-end">
+                                    <div class="inputs">
+                                        {{ search_form.end_date }}
+                                    </div>
+                                    <div class="label">
+                                        End date
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="search-button-wrap">
+                <div class="search-button" onClick="submitForm()"></div>
+            </div>
+        </div>
+        <div title="Results sorting" class="results-ordering">
+        {{ search_form.order }}
+        {{ search_form.direction }}
+        </div>
+    </form>
+    <script>
+        tagifySetup();
+    </script>
+    <span class="pagination">
+            <a class="first" href="?{% url_replace request 'page' '1' %}">«</a>
+
+            {% if pagination.has_previous %}
+                <a class="previous" href="?{% url_replace request 'page' pagination.previous_page_number %}"><</a>
+                {% else %}
+                <a class="previous" href="?{% url_replace request 'page' '1' %}"><</a>
+            {% endif %}
+
+            {% for page in pages_before %}
+                <a href="?{% url_replace request 'page' page %}">{{ page }}</a>
+            {% endfor %}
+
+            <a class="current-page" href="">{{ pagination.number }}</a>
+
+            {% for page in pages_after %}
+                <a href="?{% url_replace request 'page' page %}">{{ page }}</a>
+            {% endfor %}
+
+            {% if pagination.has_next %}
+                <a class="next" href="?{% url_replace request 'page' pagination.next_page_number %}">></a>
+            {% else %}
+                <a class="next" href="?{% url_replace request 'page' pagination.paginator.num_pages %}">></a>
+            {% endif %}
+
+            <a class="last" href="?{% url_replace request 'page' pagination.paginator.num_pages %}">»</a>
+    </span>
+    <span class="search-statistic">
+        Total found
+        <span class="total-matches-value">{{ total_videos | intcomma }} video{{ total_videos | pluralize }} in {{ execution_time}} seconds</span>
+    </span>
+    <div class="players">
+        {% for video in videos %}
+        {% if video.speech_data %}
+        <div class="result-container" id="result-{{ video.videoId }}">
+            <div class="result-wrap">
+                <div class="player-container"
+                     id="{{ video.videoId }}">
+                </div>
+                <div onclick="thumbPlay(this)"
+                     class="thumbnail"
+                     title="Play first found moment">
+                    <img src="{{video.thumbnailsMediumUrl}}" />
+                    <div class="player-button"></div>
+                </div>
+                <div class="match-container-wrap">
+                    <div class="playlist-button-wrap">
+                        <span class="playlist-button"
+                              onclick="playAllMatches(this);">
+                            <img src="{% static 'img/icon/play-icon.png'%}">
+                            <p>Play match list</p>
+                        </span>
+                    </div>
+                    <div class="match-container"
+                         end_id = "{{ video.end_id }}"
+                         matches_left = "{{ video.count_rest_speech_data }}">
+                        {% for data in video.speech_data %}
+                        <div class="match-wrap" id="match-{{ video.videoId }}-{{ forloop.counter }}"
+                             video_id="{{video.videoId}}"
+                             start_time="{{ data.startTime }}"
+                             end_time="{{ data.endTime }}"
+                             start_id="{{ data.start_id }}"
+                             end_id="{{ data.end_id }}"
+                             duration ="{{ video.duration }}"
+                             loop="{{ data.loop }}"
+                             play_all="">
+                            <div class="loop-icon" onclick="jumpToTime(this, 'true');" title="Play this moment in loop">
+                                <img src="{% static 'img/icon/blank-icon.png'%}">
+                            </div>
+                            <div class="status-icon" onclick="jumpToTime(this, 'false');" title="Play this moment">
+                                <img src="{% static 'img/icon/blank-icon.png'%}">
+                            </div>
+                            <div class="match" onclick="jumpToTime(this, '{{ data.loop }}');" title="Play this moment">
+                                <span class="match-time">{{data.startTime_formated}}</span>
+                                <span class="match-text">
+                                    ...{{data.match|safe}}...
+                                </span>
+                            </div>
+                            <div class="share-icon"
+                                 title="Share this moment"
+                                 onclick="shareMoment(this);">
+                                <img src="{% static 'img/icon/blank-icon.png'%}">
+                            </div>
+                        </div>
+                        {% endfor %}
+                        {% if video.count_rest_speech_data > 0 %}
+                        <div class="load-more-button-wrap">
+                        <span class="load-more-button">
+                            <img src="{% static 'img/icon/ajax-loader.gif'%}" class="load-icon">
+                        </span>
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="matches-counter">
+                        {% if video.count_rest_speech_data > 0 %}
+                        <p>Total <span class="count-total-matches">{{ video.count_total_data }}</span> match{{ video.count_total_data | pluralize:"es" }} <span class="count-left-matches">(<span class="left-matches-value">{{ video.count_rest_speech_data }}</span> left)</span></p>
+                        {% else %}
+                        <p>Total <span class="count-total-matches">{{ video.count_total_data }}</span> match{{ video.count_total_data | pluralize:"es" }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+                <script>
+                    matchScrollInit('result-{{ video.videoId }}');
+                </script>
+
+            </div>
+            <div class="info-wrap">
+                <div class="video-title">
+                    <a href="https://www.youtube.com/watch?v={{ video.videoId }}" target="_blank" title="Watch video on YouTube">{{ video.title | safe }}</a>
+                </div>
+                <div class="meta-info">
+                    <div class="channel-logo">
+                        <a href="https://youtube.com/channel/{{ video.channelId.channelId }}" target="_blank" title="View channel on YouTube"><img src="{{ video.channelId.thumbnailsDefaultUrl }}"></a>
+                    </div>
+                    <div class="channel-title-subscribe">
+                        <div class="channel-title">
+                            <a href="https://youtube.com/channel/{{ video.channelId.channelId }}" target="_blank" title="View channel on YouTube">
+                                {{ video.channelId.title }}
+                            </a>
+                        </div>
+                        <div class="subscribe-button">
+                            <div class="g-ytsubscribe" data-channel="{{ video.channelId.title }}" data-layout="default" data-count="hidden">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="share-result-button-wrap">
+                        <button type="button" class="share-result-button" onclick="shareResult(this);">Share this matches</button>
+                    </div>
+                    <div class="video-rates">
+                        <div class="date-views">
+                            <div class="published-date" title="{{ video.publishedAt | date:'DATETIME_FORMAT' }}">
+                                <div class="published-date-label">
+                                    Published:
+                                </div>
+                                <div class="published-date-value">
+                                    {{ video.publishedAt | naturaltime }}
+                                </div>
+                            </div>
+                            <div class="video-views" title="{{ video.viewCount | intcomma | default_if_none:'Unavailable' }}">
+                                <div class="views-label">
+                                    Views:
+                                </div>
+                                <div class="views-value">
+                                    {{ video.viewCount | intword_thousands | default_if_none:'Unavailable' }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="ratings">
+                            <div class="likes" title="{{ video.likeCount | intcomma | default_if_none:'Unavailable' }}">
+                                <div class="like-icon">
+                                    <img src="{% static 'img/icon/like-icon.png'%}">
+                                </div>
+                                <div class="like-value">
+                                    {{ video.likeCount | intword_thousands | default_if_none:'Unavailable' }}
+                                </div>
+                            </div>
+                            <div class="dislikes" title="{{ video.dislikeCount | intcomma | default_if_none:'Unavailable' }}">
+                                <div class="dislike-icon">
+                                    <img src="{% static 'img/icon/dislike-icon.png'%}">
+                                </div>
+                                <div class="dislike-value">
+                                    {{ video.dislikeCount | intword_thousands | default_if_none:'Unavailable' }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% if search_form.tags.value or search_form.description.value %}
+            <div class="volume-info info-showed">
+                {% if video.tags %}
+                <div class="video-tags">
+                    <div class="tags-label">
+                        Tags:
+                    </div>
+                    <div class="tags-value">
+                        {{ video.tags | safe }}
+                    </div>
+                </div>
+                {% else %}
+                <div class="video-tags">
+                    <div class="tags-label">
+                        Tags not available
+                    </div>
+                </div>
+                {% endif %}
+                {% if video.description %}
+                <div class="video-description">
+                    <div class="description-label">
+                        Description:
+                    </div>
+                    <div class="description-value">
+                        {{ video.description|safe|linebreaksbr|urlize }}
+                    </div>
+                </div>
+                {% else %}
+                <div class="video-description">
+                    <div class="description-label">
+                        Description not available
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+            <div class="volume-slide" onclick="showVolumeInfo(this);">
+                <div class="volume-slide-label">
+                    Tags and description
+                </div>
+                <div class="volume-slide-logo">
+                    <img src="{% static 'img/icon/arrow-up-icon.png'%}">
+                </div>
+            </div>
+            {% else %}
+            <div class="volume-info info-hidden">
+                <div class="video-tags">
+                    {% if video.tags %}
+                    <div class="tags-label">
+                        Tags:
+                    </div>
+                    <div class="tags-value">
+                        {{ video.tags | safe }}
+                    </div>
+                    {% else %}
+                    <div class="tags-label">
+                        Tags not available
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="video-description">
+                    {% if video.description %}
+                    <div class="description-label">
+                        Description:
+                    </div>
+                    <div class="description-value">
+                        {{ video.description|safe|linebreaksbr|urlize }}
+                    </div>
+                    {% else %}
+                    <div class="description-label">
+                        Description not available
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="volume-slide" onclick="showVolumeInfo(this);">
+                <div class="volume-slide-label">
+                    Tags and description
+                </div>
+                <div class="volume-slide-logo">
+                    <img src="{% static 'img/icon/arrow-down-icon.png'%}">
+                </div>
+            </div>
+            {% endif %}
+        </div>
+        {% else %}
+        <div class="result-container no-speech" id="result-{{ video.videoId }}">
+            <div class="result-wrap no-speech">
+                <div class="player-container"
+                     id="{{video.videoId}}">
+                </div>
+                <div onclick="thumbPlayNoSpeech(this)"
+                     class="thumbnail"
+                     title="Play first found moment">
+                    <img src="{{video.thumbnailsMediumUrl}}" />
+                    <div class="player-button"></div>
+                </div>
+            </div>
+            <div class="info-wrap">
+                <div class="video-title">
+                    <a href="https://www.youtube.com/watch?v={{ video.videoId }}" target="_blank" title="Watch video on YouTube">{{ video.title | safe }}</a>
+                </div>
+                <div class="meta-info">
+                    <div class="channel-logo">
+                        <a href="https://youtube.com/channel/{{ video.channelId.channelId }}" target="_blank" title="View channel on YouTube"><img src="{{ video.channelId.thumbnailsDefaultUrl }}"></a>
+                    </div>
+                    <div class="channel-title-subscribe">
+                        <div class="channel-title">
+                            <a href="https://youtube.com/channel/{{ video.channelId.channelId }}" target="_blank" title="View channel on YouTube">
+                                {{ video.channelId.title }}
+                            </a>
+                        </div>
+                        <div class="subscribe-button">
+                            <div class="g-ytsubscribe" data-channel="{{ video.channelId.title }}" data-layout="default" data-count="hidden">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="share-result-button-wrap">
+                        <button type="button" class="share-result-button" onclick="shareResult(this, 'true');">Share this match</button>
+                    </div>
+                    <div class="video-rates">
+                        <div class="date-views">
+                            <div class="published-date" title="{{ video.publishedAt | date:'DATETIME_FORMAT' }}">
+                                <div class="published-date-label">
+                                    Published:
+                                </div>
+                                <div class="published-date-value">
+                                    {{ video.publishedAt | naturaltime }}
+                                </div>
+                            </div>
+                            <div class="video-views" title="{{ video.viewcount | intcomma | default_if_none:'Unavailable' }}">
+                                <div class="views-label">
+                                    Views:
+                                </div>
+                                <div class="views-value">
+                                    {{ video.viewCount | intword_thousands | default_if_none:'Unavailable' }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="ratings">
+                            <div class="likes" title="{{ video.likeCount | intcomma  | default_if_none:'Unavailable' }}">
+                                <div class="like-icon">
+                                    <img src="{% static 'img/icon/like-icon.png'%}">
+                                </div>
+                                <div class="like-value">
+                                    {{ video.likeCount | intword_thousands | default_if_none:'Unavailable' }}
+                                </div>
+                            </div>
+                            <div class="dislikes" title="{{ video.dislikeCount | intcomma | default_if_none:'Unavailable' }}">
+                                <div class="dislike-icon">
+                                    <img src="{% static 'img/icon/dislike-icon.png'%}">
+                                </div>
+                                <div class="dislike-value">
+                                    {{ video.dislikeCount | intword_thousands | default_if_none:'Unavailable' }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% if search_form.tags.value or search_form.description.value %}
+            <div class="volume-info info-showed">
+                <div class="video-tags">
+                    <div class="tags-label">
+                        Tags:
+                    </div>
+                    <div class="tags-value">
+                        {{ video.tags | safe}}
+                    </div>
+                </div>
+                <div class="video-description">
+                    <div class="description-label">
+                        Description:
+                    </div>
+                    <div class="description-value">
+                        {{ video.description|safe|linebreaksbr|urlize }}
+                    </div>
+                </div>
+            </div>
+            <div class="volume-slide" onclick="showVolumeInfo(this);">
+                <div class="volume-slide-label">
+                    Tags and description
+                </div>
+                <div class="volume-slide-logo">
+                    <img src="{% static 'img/icon/arrow-up-icon.png'%}">
+                </div>
+            </div>
+            {% else %}
+            <div class="volume-info info-hidden">
+                <div class="video-tags">
+                    <div class="tags-label">
+                        Tags:
+                    </div>
+                    <div class="tags-value">
+                        {{ video.tags | safe }}
+                    </div>
+                </div>
+                <div class="video-description">
+                    <div class="description-label">
+                        Description:
+                    </div>
+                    <div class="description-value">
+                        {{ video.description|safe|linebreaksbr|urlize }}
+                    </div>
+                </div>
+            </div>
+            <div class="volume-slide" onclick="showVolumeInfo(this);">
+                <div class="volume-slide-label">
+                    Tags and description
+                </div>
+                <div class="volume-slide-logo">
+                    <img src="{% static 'img/icon/arrow-down-icon.png'%}">
+                </div>
+            </div>
+            {% endif %}
+        </div>
+        {% endif %}
+        {% endfor %}
+    </div>
+    <span class="pagination">
+            <a class="first" href="?{% url_replace request 'page' '1' %}">«</a>
+
+            {% if pagination.has_previous %}
+                <a class="previous" href="?{% url_replace request 'page' pagination.previous_page_number %}"><</a>
+                {% else %}
+                <a class="previous" href="?{% url_replace request 'page' '1' %}"><</a>
+            {% endif %}
+
+            {% for page in pages_before %}
+                <a href="?{% url_replace request 'page' page %}">{{ page }}</a>
+            {% endfor %}
+
+            <a class="current-page" href="">{{ pagination.number }}</a>
+
+            {% for page in pages_after %}
+                <a href="?{% url_replace request 'page' page %}">{{ page }}</a>
+            {% endfor %}
+
+            {% if pagination.has_next %}
+                <a class="next" href="?{% url_replace request 'page' pagination.next_page_number %}">></a>
+            {% else %}
+                <a class="next" href="?{% url_replace request 'page' pagination.paginator.num_pages %}">></a>
+            {% endif %}
+
+            <a class="last" href="?{% url_replace request 'page' pagination.paginator.num_pages %}">»</a>
+    </span>
+    <script async src="https://static.addtoany.com/menu/page.js"></script>
+    {% compress js %}
+    <script src="{% static 'js/share.js' %}" type="text/javascript"></script>
+    {% endcompress %}
+    <script>
+                var a2a_config = a2a_config || {};
+                a2a_config.callbacks = a2a_config.callbacks || [];
+                a2a_config.callbacks.push({
+                    share: updateShare
+                });
+    </script>
+    <div class="shareForm" id="shareFormMatch"
+         title="Share this moment">
+        You can change following values for better appearance:
+        <div class="title">
+            <div class="title-label">
+                Title:
+            </div>
+            <div class="title-form">
+                {{ share_form.share_title }}
+            </div>
+        </div>
+        <div class="start-time">
+            <div class="start-time-form">
+                <div class="start-time-label">
+                    Playback start time:
+                </div>
+                <div class="start-time-input">
+                    {{ share_form.share_start_time }}
+                </div>
+            </div>
+            <div class="start-time-range">
+                <input type="range" id="start_time_range" oninput="updateTime(this,  'id_share_start_time', seconds=true);" min="0" max="3600" value="0" step="5">
+            </div>
+        </div>
+        <div class="end-time">
+            <div class="end-time-form">
+                <div class="end-time-label">
+                    Playback end time:
+                </div>
+                <div class="end-time-input">
+                    {{ share_form.share_end_time }}
+                </div>
+            </div>
+            <div class="end-time-range">
+                <input type="range" id="end_time_range" oninput="updateTime(this, 'id_share_end_time', seconds=true);" min="0" max="3600" value="0" step="5">
+            </div>
+        </div>
+        <div class="options-first-row">
+            <div class="loop-option">
+                <div class="loop-label">Play in loop:</div>
+                <div class="checkbox">
+                    <label class="switch">
+                        {{ share_form.loop_checkbox }}
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="share-buttons">
+            <button type="button" id="btn-share-play" onclick="previewShareMoment()">Watch this moment</button>
+            <button type="button" id="btn-share-reset" onclick="resetShareMoment()">Reset to default</button>
+        </div>
+        <div class="a2a_kit a2a_kit_size_32 a2a_default_style" id="shareMatch" data-a2a-url="http://somepage.url" data-a2a-title="page title">
+            <a class="a2a_dd" href="https://www.addtoany.com/share"></a>
+                <a class="a2a_button_facebook"></a>
+                <a class="a2a_button_twitter"></a>
+                <a class="a2a_button_reddit"></a>
+                <a class="a2a_button_linkedin"></a>
+                <a class="a2a_button_telegram"></a>
+                <a class="a2a_button_tumblr"></a>
+                <a class="a2a_button_vk"></a>
+                <a class="a2a_button_copy_link"></a>
+        </div>
+    </div>
+    <div class="shareForm" id="shareFormResult"
+         title="Share this matches">
+        You can change title in your own way:
+        <div class="title">
+            <div class="title-label">
+                Title:
+            </div>
+            <div class="title-form">
+                {{ share_form.result_share_title }}
+            </div>
+        </div>
+        <div class="options-first-row">
+            <div class="autoplay-option">
+                <div class="autoplay-label">Autoplay match list:</div>
+                <div class="checkbox">
+                    <label class="switch">
+                        {{ share_form.autoplay_checkbox }}
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+            </div>
+
+        </div>
+        <div class="share-buttons">
+            <div class="a2a_kit a2a_kit_size_32 a2a_default_style" id="shareResult" data-a2a-url="http://somepage.url" data-a2a-title="page title">
+                <a class="a2a_dd" href="https://www.addtoany.com/share"></a>
+                <a class="a2a_button_facebook"></a>
+                <a class="a2a_button_twitter"></a>
+                <a class="a2a_button_reddit"></a>
+                <a class="a2a_button_linkedin"></a>
+                <a class="a2a_button_telegram"></a>
+                <a class="a2a_button_tumblr"></a>
+                <a class="a2a_button_vk"></a>
+                <a class="a2a_button_copy_link"></a>
+            </div>
+        </div>
+    </div>
+
+</div>
+<span class="basement">
+    <a href="/">Main page</a>
+    &nbsp;
+    &bull;
+    &nbsp;
+    <a href="/contact">Contact us</a>
+</span>
+
+<div id="blank-match-wrap"
+     onclick="jumpToTime(this);"
+             video_id=""
+             start_time=""
+             end_time=""
+             loop=""
+             play_all="">
+</div>
+{% analytical_body_bottom %}
+
+{% if shared_video %}
+<div class="shared-result-wrap">
+    <div id="shared-result" class="shared-result">
+        {% if shared_video.speech_data %}
+        <div class="result-container" id="result-{{ shared_video.videoId }}">
+            <div class="result-wrap">
+                <div class="player-container"
+                     id="{{ shared_video.videoId }}">
+                </div>
+                <div onclick="thumbPlay(this)"
+                     class="thumbnail"
+                     title="Play first found moment">
+                    <img src="{{ shared_video.thumbnailsMediumUrl }}" />
+                    <div class="player-button"></div>
+                </div>
+                <div class="match-container-wrap">
+                    <div class="playlist-button-wrap">
+                        <span class="playlist-button"
+                              onclick="playAllMatches(this);">
+                            <img src="{% static 'img/icon/play-icon.png'%}">
+                            <p>Play match list</p>
+                        </span>
+                    </div>
+                    <div class="match-container"
+                         end_id = "{{ shared_video.end_id }}"
+                         matches_left = "{{ video.count_rest_speech_data }}">
+                        {% for data in shared_video.speech_data %}
+                        <div class="match-wrap" id="match-{{ shared_video.videoId }}-{{ forloop.counter }}"
+                             video_id="{{shared_video.videoId}}"
+                             start_time="{{ data.startTime }}"
+                             end_time="{{ data.endTime }}"
+                             start_id="{{ data.start_id }}"
+                             end_id="{{ data.end_id }}"
+                             duration ="{{ shared_video.duration }}"
+                             loop="{{ data.loop }}"
+                             play_all="">
+                            <div class="loop-icon" onclick="jumpToTime(this, 'true');" title="Play this moment in loop">
+                                <img src="{% static 'img/icon/blank-icon.png'%}">
+                            </div>
+                            <div class="status-icon" onclick="jumpToTime(this, 'false');" title="Play this moment">
+                                <img src="{% static 'img/icon/blank-icon.png'%}">
+                            </div>
+                            <div class="match" onclick="jumpToTime(this, '{{ data.loop }}');" title="Play this moment">
+                                <span class="match-time">{{data.startTime_formated}}</span>
+                                <span class="match-text">
+                                    ...{{data.match|safe}}...
+                                </span>
+                            </div>
+                            <div class="share-icon"
+                                 title="Share this moment"
+                                 onclick="shareMoment(this);">
+                                <img src="{% static 'img/icon/blank-icon.png'%}">
+                            </div>
+                        </div>
+                        {% endfor %}
+                        {% if shared_video.count_rest_speech_data > 0 %}
+                        <div class="load-more-button-wrap">
+                        <span class="load-more-button">
+                            <img src="{% static 'img/icon/ajax-loader.gif'%}" class="load-icon">
+                        </span>
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="matches-counter">
+                        {% if shared_video.count_rest_speech_data > 0 %}
+                        <p>Total <span class="count-total-matches">{{ shared_video.count_total_data }}</span> match{{ shared_video.count_total_data | pluralize:"es" }} <span class="count-left-matches">(<span class="left-matches-value">{{ shared_video.count_rest_speech_data }}</span> left)</span></p>
+                        {% else %}
+                        <p>Total <span class="count-total-matches">{{ shared_video.count_total_data }}</span> match{{ shared_video.count_total_data | pluralize:"es" }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <div class="info-wrap">
+                <div class="video-title">
+                    <a href="https://www.youtube.com/watch?v={{ shared_video.videoId }}" target="_blank" title="Watch video on YouTube">{{ shared_video.title | safe }}</a>
+                </div>
+                <div class="meta-info">
+                    <div class="channel-logo">
+                        <a href="https://youtube.com/channel/{{ shared_video.channelId.channelId }}" target="_blank" title="View channel on YouTube"><img src="{{ shared_video.channelId.thumbnailsDefaultUrl }}"></a>
+                    </div>
+                    <div class="channel-title-subscribe">
+                        <div class="channel-title">
+                            <a href="https://youtube.com/channel/{{ shared_video.channelId.channelId }}" target="_blank" title="View channel on YouTube">
+                                {{ shared_video.channelId.title }}
+                            </a>
+                        </div>
+                        <div class="subscribe-button">
+                            <div class="g-ytsubscribe" data-channel="{{ shared_video.channelId.title }}" data-layout="default" data-count="hidden">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="share-result-button-wrap">
+                        <button type="button" class="share-result-button" onclick="shareResult(this);">Share this matches</button>
+                    </div>
+                    <div class="video-rates">
+                        <div class="date-views">
+                            <div class="published-date" title="{{ shared_video.publishedAt | date:'DATETIME_FORMAT' }}">
+                                <div class="published-date-label">
+                                    Published:
+                                </div>
+                                <div class="published-date-value">
+                                    {{ shared_video.publishedAt | naturaltime }}
+                                </div>
+                            </div>
+                            <div class="video-views" title="{{ shared_video.viewCount | intcomma | default_if_none:'Unavailable' }}">
+                                <div class="views-label">
+                                    Views:
+                                </div>
+                                <div class="views-value">
+                                    {{ shared_video.viewCount | intword_thousands | default_if_none:'Unavailable' }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="ratings">
+                            <div class="likes" title="{{ shared_video.likeCount | intcomma | default_if_none:'Unavailable' }}">
+                                <div class="like-icon">
+                                    <img src="{% static 'img/icon/like-icon.png'%}">
+                                </div>
+                                <div class="like-value">
+                                    {{ shared_video.likeCount | intword_thousands | default_if_none:'Unavailable' }}
+                                </div>
+                            </div>
+                            <div class="dislikes" title="{{ shared_video.dislikeCount | intcomma | default_if_none:'Unavailable' }}">
+                                <div class="dislike-icon">
+                                    <img src="{% static 'img/icon/dislike-icon.png'%}">
+                                </div>
+                                <div class="dislike-value">
+                                    {{ shared_video.dislikeCount | intword_thousands | default_if_none:'Unavailable' }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% if search_form.tags.value or search_form.description.value %}
+            <div class="volume-info info-showed">
+                {% if shared_video.tags %}
+                <div class="video-tags">
+                    <div class="tags-label">
+                        Tags:
+                    </div>
+                    <div class="tags-value">
+                        {{ shared_video.tags | safe }}
+                    </div>
+                </div>
+                {% else %}
+                <div class="video-tags">
+                    <div class="tags-label">
+                        Tags not available
+                    </div>
+                </div>
+                {% endif %}
+                {% if shared_video.description %}
+                <div class="video-description">
+                    <div class="description-label">
+                        Description:
+                    </div>
+                    <div class="description-value">
+                        {{ shared_video.description|safe|linebreaksbr|urlize }}
+                    </div>
+                </div>
+                {% else %}
+                <div class="video-description">
+                    <div class="description-label">
+                        Description not available
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+            <div class="volume-slide" onclick="showVolumeInfo(this);">
+                <div class="volume-slide-label">
+                    Tags and description
+                </div>
+                <div class="volume-slide-logo">
+                    <img src="{% static 'img/icon/arrow-up-icon.png'%}">
+                </div>
+            </div>
+            {% else %}
+            <div class="volume-info info-hidden">
+                <div class="video-tags">
+                    {% if shared_video.tags %}
+                    <div class="tags-label">
+                        Tags:
+                    </div>
+                    <div class="tags-value">
+                        {{ shared_video.tags | safe }}
+                    </div>
+                    {% else %}
+                    <div class="tags-label">
+                        Tags not available
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="video-description">
+                    {% if shared_video.description %}
+                    <div class="description-label">
+                        Description:
+                    </div>
+                    <div class="description-value">
+                        {{ shared_video.description|safe|linebreaksbr|urlize }}
+                    </div>
+                    {% else %}
+                    <div class="description-label">
+                        Description not available
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="volume-slide" onclick="showVolumeInfo(this);">
+                <div class="volume-slide-label">
+                    Tags and description
+                </div>
+                <div class="volume-slide-logo">
+                    <img src="{% static 'img/icon/arrow-down-icon.png'%}">
+                </div>
+            </div>
+            {% endif %}
+        </div>
+        {% else %}
+        <div class="result-container no-speech" id="result-{{ shared_video.videoId }}">
+            <div class="result-wrap no-speech">
+                <div class="player-container"
+                     id="{{shared_video.videoId}}">
+                </div>
+                <div onclick="thumbPlayNoSpeech(this)"
+                     class="thumbnail"
+                     title="Play first found moment">
+                    <img src="{{shared_video.thumbnailsMediumUrl}}" />
+                    <div class="player-button"></div>
+                </div>
+            </div>
+            <div class="info-wrap">
+                <div class="video-title">
+                    <a href="https://www.youtube.com/watch?v={{ shared_video.videoId }}" target="_blank" title="Watch video on YouTube">{{ shared_video.title | safe }}</a>
+                </div>
+                <div class="meta-info">
+                    <div class="channel-logo">
+                        <a href="https://youtube.com/channel/{{ shared_video.channelId.channelId }}" target="_blank" title="View channel on YouTube"><img src="{{ shared_video.channelId.thumbnailsDefaultUrl }}"></a>
+                    </div>
+                    <div class="channel-title-subscribe">
+                        <div class="channel-title">
+                            <a href="https://youtube.com/channel/{{ shared_video.channelId.channelId }}" target="_blank" title="View channel on YouTube">
+                                {{ shared_video.channelId.title }}
+                            </a>
+                        </div>
+                        <div class="subscribe-button">
+                            <div class="g-ytsubscribe" data-channel="{{ shared_video.channelId.title }}" data-layout="default" data-count="hidden">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="share-result-button-wrap">
+                        <button type="button" class="share-result-button" onclick="shareResult(this, 'true');">Share this match</button>
+                    </div>
+                    <div class="video-rates">
+                        <div class="date-views">
+                            <div class="published-date" title="{{ shared_video.publishedAt | date:'DATETIME_FORMAT' }}">
+                                <div class="published-date-label">
+                                    Published:
+                                </div>
+                                <div class="published-date-value">
+                                    {{ shared_video.publishedAt | naturaltime }}
+                                </div>
+                            </div>
+                            <div class="video-views" title="{{ shared_video.viewcount | intcomma | default_if_none:'Unavailable' }}">
+                                <div class="views-label">
+                                    Views:
+                                </div>
+                                <div class="views-value">
+                                    {{ shared_video.viewCount | intword_thousands | default_if_none:'Unavailable' }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="ratings">
+                            <div class="likes" title="{{ shared_video.likeCount | intcomma | default_if_none:'Unavailable' }}">
+                                <div class="like-icon">
+                                    <img src="{% static 'img/icon/like-icon.png'%}">
+                                </div>
+                                <div class="like-value">
+                                    {{ shared_video.likeCount | intword_thousands | default_if_none:'Unavailable' }}
+                                </div>
+                            </div>
+                            <div class="dislikes" title="{{ shared_video.dislikeCount | intcomma | default_if_none:'Unavailable' }}">
+                                <div class="dislike-icon">
+                                    <img src="{% static 'img/icon/dislike-icon.png'%}">
+                                </div>
+                                <div class="dislike-value">
+                                    {{ shared_video.dislikeCount | intword_thousands | default_if_none:'Unavailable' }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% if search_form.tags.value or search_form.description.value %}
+            <div class="volume-info info-showed">
+                <div class="video-tags">
+                    <div class="tags-label">
+                        Tags:
+                    </div>
+                    <div class="tags-value">
+                        {{ shared_video.tags | safe }}
+                    </div>
+                </div>
+                <div class="video-description">
+                    <div class="description-label">
+                        Description:
+                    </div>
+                    <div class="description-value">
+                        {{ shared_video.description|safe|linebreaksbr|urlize }}
+                    </div>
+                </div>
+            </div>
+            <div class="volume-slide" onclick="showVolumeInfo(this);">
+                <div class="volume-slide-label">
+                    Tags and description
+                </div>
+                <div class="volume-slide-logo">
+                    <img src="{% static 'img/icon/arrow-up-icon.png'%}">
+                </div>
+            </div>
+            {% else %}
+            <div class="volume-info info-hidden">
+                <div class="video-tags">
+                    <div class="tags-label">
+                        Tags:
+                    </div>
+                    <div class="tags-value">
+                        {{ shared_video.tags | safe }}
+                    </div>
+                </div>
+                <div class="video-description">
+                    <div class="description-label">
+                        Description:
+                    </div>
+                    <div class="description-value">
+                        {{ shared_video.description|safe|linebreaksbr|urlize }}
+                    </div>
+                </div>
+            </div>
+            <div class="volume-slide" onclick="showVolumeInfo(this);">
+                <div class="volume-slide-label">
+                    Tags and description
+                </div>
+                <div class="volume-slide-logo">
+                    <img src="{% static 'img/icon/arrow-down-icon.png'%}">
+                </div>
+            </div>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+</div>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.js"></script>
+<script>
+    showShared();
+</script>
+{% endif %}
+</body>
+</html>

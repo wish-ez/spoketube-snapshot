@@ -1,0 +1,22 @@
+@media only screen and (min-width:0px) and (max-width:534px) {
+    .no-result {
+        background-size: 100vw
+    }
+}
+
+@media only screen and (min-width:534px) {
+    .no-result {
+        background-size: 35vw
+    }
+}
+
+.no-result {
+    background-image: url(/img/wut.png);
+    background-position-x: left;
+    background-position-y: bottom;
+    background-repeat: no-repeat
+}
+
+html.no-result .search-button-wrap {
+    margin-bottom: 0
+}

@@ -1,0 +1,36 @@
+.content {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center
+}
+
+.search-widgets {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    height: 100%
+}
+
+.main-page-text {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    text-align: center;
+    max-width: 80vw
+}
+
+.main-page-tips {
+    text-align: left;
+}
+
+div .tip {
+    margin-top: 4em
+}
+
+img {
+    height: auto;
+    width: 10em
+}
